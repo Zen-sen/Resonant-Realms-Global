@@ -41,10 +41,10 @@ export class Match3Engine {
     }
   }
 
-  handleClick(screenX: number, screenY: number) {
+  handleClick(canvasX: number, canvasY: number) {
     if (this.animating) return;
 
-    const cell = this.renderer.screenToGrid(screenX, screenY);
+    const cell = this.renderer.canvasToGrid(canvasX, canvasY);
     if (!cell) return;
 
     if (this.selected === null) {

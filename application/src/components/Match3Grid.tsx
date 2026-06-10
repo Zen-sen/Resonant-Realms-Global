@@ -28,8 +28,20 @@ export default function Match3Grid({ onScoreChange, awakended = false }: Match3G
   const canvasContainerRef = useRef<HTMLDivElement>(null);
 
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !engineRef.current) return;
+
     e.preventDefault();
-    engineRef.current?.handleClick(e.clientX, e.clientY);
+
+    const rect = canvas.getBoundingClientRect();
+    const relativeX = e.clientX - rect.left;
+    const relativeY = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const engineX = relativeX * scaleX;
+    const engineY = relativeY * scaleY;
+
+    engineRef.current.handleClick(engineX, engineY);
   }, []);
 
   return (
