@@ -1,0 +1,13 @@
+{
+  "name": "resonant-realms-global",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Resonant Realms Global — A decentralized match-3 gaming protocol on Pi Network",
+  "scripts": {
+    "dev": "cd application && npm run dev",
+    "build": "cd application && npm run build",
+    "compile": "cd blockchain && npx hardhat compile",
+    "test": "cd blockchain && npx hardhat test",
+    "deploy": "cd blockchain && npx hardhat run scripts/deploy.ts"
+  }
+}

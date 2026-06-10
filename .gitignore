@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Next.js
+.next/
+out/
+
+# Hardhat / Blockchain
+blockchain/artifacts/
+blockchain/cache/
+blockchain/typechain-types/
+
+# Prevent internal corporate legal data from spilling onto public repos
+legal/compliance/*.pdf
+legal/compliance/secret-*
+legal/drafts/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
