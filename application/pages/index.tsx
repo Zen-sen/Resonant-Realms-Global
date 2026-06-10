@@ -24,8 +24,10 @@ function GameContent() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      padding: "20px",
-      gap: "20px",
+      padding: "16px",
+      gap: "16px",
+      maxWidth: "100%",
+      overflowX: "hidden",
     }}>
       <header style={{
         textAlign: "center",

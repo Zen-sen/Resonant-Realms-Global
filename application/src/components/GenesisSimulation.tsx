@@ -109,7 +109,7 @@ export default function GenesisSimulation() {
       </h3>
 
       {/* Status indicators */}
-      <div style={{ display: "flex", gap: "8px", justifyContent: "center", marginBottom: "16px" }}>
+      <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap", marginBottom: "16px" }}>
         {["AUTH", "MATCH-3", "EDGE", "GENESIS"].map((label, i) => {
           const status =
             phase === "idle" ? "pending" :
