@@ -64,17 +64,26 @@ export function PiProvider({ children }: PiProviderProps) {
   const [balance, setBalance] = useState<PiBalance[]>([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("pi_session");
-    if (stored) {
-      try {
-        const session = JSON.parse(stored);
-        setUser(session.user);
-        setAccessToken(session.accessToken);
-      } catch {
-        localStorage.removeItem("pi_session");
+    try {
+      const stored = localStorage.getItem("pi_session");
+      if (stored) {
+        try {
+          const session = JSON.parse(stored);
+          setUser(session.user);
+          setAccessToken(session.accessToken);
+        } catch {
+          localStorage.removeItem("pi_session");
+        }
       }
+    } catch {
+      console.warn("localStorage not available (sandboxed webview)");
     }
-    initPi();
+
+    try {
+      initPi();
+    } catch (err) {
+      console.warn("Pi SDK init failed on mobile webview:", err);
+    }
   }, []);
 
   const signIn = useCallback(async () => {

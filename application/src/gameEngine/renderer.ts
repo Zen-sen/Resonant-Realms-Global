@@ -108,8 +108,10 @@ export function createRenderer(canvas: HTMLCanvasElement, config: Partial<Engine
 
   function screenToGrid(screenX: number, screenY: number): Vec2 | null {
     const rect = canvas.getBoundingClientRect();
-    const x = screenX - rect.left;
-    const y = screenY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (screenX - rect.left) * scaleX;
+    const y = (screenY - rect.top) * scaleY;
     const col = Math.floor(x / cfg.tileSize);
     const row = Math.floor(y / cfg.tileSize);
     if (row >= 0 && row < cfg.gridSize && col >= 0 && col < cfg.gridSize) {
