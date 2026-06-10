@@ -35,11 +35,11 @@ async function deployDiamond() {
     console.log("MirrorAdversaryFacet deployed:", mirrorAdversaryFacet.target);
 
     // Prepare initial cuts: add all facets to DiamondStone
-    const cutFacetSelectors = getSelectors(diamondCutFacet);
-    const loupeFacetSelectors = getSelectors(diamondLoupeFacet);
-    const heritageSelectors = getSelectors(ancestralHeritageFacet);
-    const factorySelectors = getSelectors(humanFactoryFacet);
-    const adversarySelectors = getSelectors(mirrorAdversaryFacet);
+    const cutFacetSelectors = getSelectors(DiamondCutFacet);
+    const loupeFacetSelectors = getSelectors(DiamondLoupeFacet);
+    const heritageSelectors = getSelectors(AncestralHeritageFacet);
+    const factorySelectors = getSelectors(HumanFactoryFacet);
+    const adversarySelectors = getSelectors(MirrorAdversaryFacet);
 
     const diamondCuts = [
         {
@@ -78,11 +78,13 @@ async function deployDiamond() {
     return diamondStone.target;
 }
 
-// Helper function to get function selectors from a contract
-function getSelectors(contract: any) {
+// Helper function to get function selectors from a contract factory
+function getSelectors(factory: any) {
     const selectors: string[] = [];
-    for (const key of Object.keys(contract.interface.functions)) {
-        selectors.push(contract.interface.getSighash(key));
+    for (const fragment of factory.interface.fragments) {
+        if (fragment.type === "function") {
+            selectors.push(fragment.selector);
+        }
     }
     return selectors;
 }

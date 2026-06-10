@@ -3,7 +3,7 @@ import AncestralHeritageABI from "./abis/AncestralHeritageFacet.json";
 import HumanFactoryABI from "./abis/HumanFactoryFacet.json";
 import MirrorAdversaryABI from "./abis/MirrorAdversaryFacet.json";
 
-const DIAMOND_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const DIAMOND_ADDRESS = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
 
 export function getDiamondContract(signerOrProvider: ethers.Signer | ethers.Provider) {
   return new ethers.Contract(DIAMOND_ADDRESS, AncestralHeritageABI.abi, signerOrProvider);

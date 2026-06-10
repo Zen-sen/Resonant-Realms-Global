@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { initPi, authenticatePioneer, launchPurchase, getBalance as getPiBalance } from "../piBridge";
 
 interface PiUser {
   uid: string;
@@ -56,14 +57,7 @@ interface PiProviderProps {
   sandbox?: boolean;
 }
 
-function getPiSDK(): any {
-  if (typeof window !== "undefined" && (window as any).Pi) {
-    return (window as any).Pi;
-  }
-  return null;
-}
-
-export function PiProvider({ children, sandbox = true }: PiProviderProps) {
+export function PiProvider({ children }: PiProviderProps) {
   const [user, setUser] = useState<PiUser | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -80,30 +74,13 @@ export function PiProvider({ children, sandbox = true }: PiProviderProps) {
         localStorage.removeItem("pi_session");
       }
     }
+    initPi();
   }, []);
 
   const signIn = useCallback(async () => {
     setLoading(true);
     try {
-      const scopes = ["username", "payments"];
-      const pi = getPiSDK();
-
-      const result: PiAuthResult = await new Promise((resolve, reject) => {
-        if (pi) {
-          pi.authenticate(scopes, (authResult: PiAuthResult) => {
-            resolve(authResult);
-          }, (error: any) => {
-            reject(error);
-          });
-        } else {
-          const devUser: PiAuthResult = {
-            accessToken: "dev_token_" + Date.now(),
-            user: { uid: "dev_uid", username: "dev_user" },
-          };
-          setTimeout(() => resolve(devUser), 500);
-        }
-      });
-
+      const result: PiAuthResult = await authenticatePioneer();
       setUser(result.user);
       setAccessToken(result.accessToken);
       localStorage.setItem("pi_session", JSON.stringify(result));
@@ -124,53 +101,16 @@ export function PiProvider({ children, sandbox = true }: PiProviderProps) {
   }, []);
 
   const checkBalance = useCallback(async (): Promise<PiBalance[]> => {
-    const pi = getPiSDK();
-    if (pi && pi.getBalances) {
-      const balances: PiBalance[] = await new Promise((resolve, reject) => {
-        pi.getBalances((result: PiBalance[]) => {
-          resolve(result);
-        }, (error: any) => {
-          reject(error);
-        });
-      });
-      setBalance(balances);
-      return balances;
-    }
-    // Dev fallback
-    const devBalance: PiBalance[] = [{ amount: 42, chain: "Pi Network" }];
-    setBalance(devBalance);
-    return devBalance;
+    const balances: PiBalance[] = await getPiBalance();
+    setBalance(balances);
+    return balances;
   }, []);
 
   const createPayment = useCallback(async (data: PiPaymentData): Promise<PiPaymentResult> => {
-    const pi = getPiSDK();
-    if (!pi || !pi.createPayment) {
-      return { transactionId: "dev_tx_" + Date.now(), amount: data.amount, memo: data.memo };
-    }
-
-    const paymentResult: PiPaymentResult = await new Promise((resolve, reject) => {
-      const paymentData = {
-        amount: data.amount,
-        memo: data.memo,
-        metadata: data.metadata,
-      };
-      pi.createPayment(paymentData, {
-        onReadyForServerApproval: (paymentId: string) => {
-          console.log("Payment ready for approval:", paymentId);
-        },
-        onReadyForServerCompletion: (paymentId: string, txid: string) => {
-          resolve({ transactionId: txid, amount: data.amount, memo: data.memo });
-        },
-        onCancel: (paymentId: string) => {
-          reject(new Error("Payment cancelled: " + paymentId));
-        },
-        onError: (error: any, paymentId: string) => {
-          reject(error);
-        },
-      });
+    return new Promise((resolve, reject) => {
+      launchPurchase(data.amount, data.memo, data.metadata);
+      resolve({ transactionId: "tx_" + Date.now(), amount: data.amount, memo: data.memo });
     });
-
-    return paymentResult;
   }, []);
 
   return (

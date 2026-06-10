@@ -8,6 +8,7 @@
     "build": "cd application && npm run build",
     "compile": "cd blockchain && npx hardhat compile",
     "test": "cd blockchain && npx hardhat test",
+    "node": "cd blockchain && npx hardhat node",
     "deploy": "cd blockchain && npx hardhat run scripts/deploy.ts"
   }
 }
